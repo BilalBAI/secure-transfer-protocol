@@ -191,6 +191,60 @@ contract TokenEscrow {
         allEscrows[id].amount = 0;
     }
 
+    function depositEther(
+        uint amount,
+        address payee,
+        string memory password,
+        bool payerRefundable,
+        bool fixedPayee
+    ) external payable {
+        address payer = msg.sender;
+        require(payee != address(0), "Invalid receiver address");
+        require(msg.value >= amount, "Insufficient Ether balance");
+
+        allEscrows.push(
+            Escrow(
+                address(0),
+                amount,
+                payer,
+                payee,
+                password,
+                payerRefundable,
+                fixedPayee
+            )
+        );
+        emit TokensEscrowed(msg.sender, payee, address(0), amount);
+    }
+
+    function withdrawEther(uint id, string memory password) external {
+        require(
+            allEscrows[id].payee == msg.sender,
+            "You are not the payee of this payment"
+        );
+        require(allEscrows[id].amount > 0, "No tokens to withdraw");
+        require(
+            keccak256(abi.encodePacked(password)) ==
+                keccak256(abi.encodePacked(allEscrows[id].password)),
+            "Incorrect password"
+        );
+        IERC20 erc20Token = IERC20(allEscrows[id].token);
+        require(
+            erc20Token.transferFrom(
+                address(this),
+                msg.sender,
+                allEscrows[id].amount
+            ),
+            "Token transfer failed"
+        );
+
+        emit TokensWithdrawn(
+            msg.sender,
+            allEscrows[id].token,
+            allEscrows[id].amount
+        );
+        allEscrows[id].amount = 0;
+    }
+
     function setOwner(address newOwner) external onlyOwner {
         require(newOwner != address(0), "Invalid owner address");
         owner = newOwner;
