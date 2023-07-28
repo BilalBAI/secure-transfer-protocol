@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 contract EtherEscrow {
-    address public owner;
+    address public owner; // @dev set to private in production
 
     struct Escrow {
         uint amount;
@@ -12,7 +12,7 @@ contract EtherEscrow {
         bool payerRefundable;
         bool fixedPayee;
     }
-    Escrow[] public allEscrows;
+    Escrow[] public allEscrows; // @dev set to private in production
 
     event EtherEscrowed(
         address indexed sender,
@@ -57,7 +57,6 @@ contract EtherEscrow {
     ) external payable {
         address payer = msg.sender;
         require(payee != address(0), "Invalid receiver address");
-        // require(msg.value >= amount, "Insufficient Ether balance");
 
         allEscrows.push(
             Escrow(
