@@ -29,6 +29,7 @@ contract EtherEscrow {
 
     constructor() {
         owner = msg.sender;
+        allEscrows.push(Escrow(0, owner, owner, "default", true, true));
     }
 
     function searchEscrowsIDByPayer() external view returns (uint) {
