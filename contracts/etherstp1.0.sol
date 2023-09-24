@@ -1,8 +1,7 @@
-// Ether Secure Transfer Protocol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract EtherEscrow {
+contract EtherSecureTransferProtocol {
     address private owner;
 
     struct Escrow {
