@@ -29,18 +29,22 @@ contract EtherSecureTransferProtocol {
         allEscrows.push(Escrow(0, owner, owner));
     }
 
-    function searchEscrowsIDByPayer() external view returns (uint) {
+    function searchEscrowsIDByPayer(
+        address payer
+    ) external view returns (uint) {
         for (uint i; i < allEscrows.length; i++) {
-            if (allEscrows[i].payer == msg.sender && allEscrows[i].amount > 0) {
+            if (allEscrows[i].payer == payer && allEscrows[i].amount > 0) {
                 return i;
             }
         }
         return 0;
     }
 
-    function searchEscrowsIDByPayee() external view returns (uint) {
+    function searchEscrowsIDByPayee(
+        address payee
+    ) external view returns (uint) {
         for (uint i; i < allEscrows.length; i++) {
-            if (allEscrows[i].payee == msg.sender && allEscrows[i].amount > 0) {
+            if (allEscrows[i].payee == payee && allEscrows[i].amount > 0) {
                 return i;
             }
         }
@@ -61,7 +65,6 @@ contract EtherSecureTransferProtocol {
             "You are not the payee of this payment"
         );
         require(allEscrows[id].amount > 0, "No ether to withdraw");
-
         payable(msg.sender).transfer(allEscrows[id].amount);
 
         emit EtherWithdrawn(msg.sender, allEscrows[id].amount);
